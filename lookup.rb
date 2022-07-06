@@ -34,7 +34,7 @@ end
 def resolve(dns_records, lookup_chain, domain)
   record = dns_records[domain]
   if (!record)
-    return ["Error : The record is not found for this #{domain}"]
+    return ["Error: record not found for #{domain}"]
   elsif record[:type] == "A"
     lookup_chain.push(record[:Name_or_IP])
     return lookup_chain
