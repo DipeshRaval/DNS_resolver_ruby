@@ -22,11 +22,12 @@ def parse_dns(dns_raw)
   dns_records = {}
 
   # removing empty line and a comments
-  arr = dns_raw.filter { |line| line.length != 1 and line.start_with?("#") == false }.map { |line| line.chomp().split(", ") }
+  text_record_array = dns_raw.filter { |line| line.length != 1 && line.start_with?("#") == false }.
+    map { |line| line.chomp().split(", ") }
 
   # pharse array to Hash
-  arr.each do |ele|
-    dns_records[ele[1]] = { :type => ele[0], :Name_or_IP => ele[2] }
+  text_record_array.each do |record_elements|
+    dns_records[record_elements[1]] = { :type => record_elements[0], :Name_or_IP => record_elements[2] }
   end
   dns_records
 end
@@ -34,15 +35,14 @@ end
 def resolve(dns_records, lookup_chain, domain)
   record = dns_records[domain]
   if (!record)
-    return ["Error: record not found for #{domain}"]
+    ["Error: record not found for #{domain}"]
   elsif record[:type] == "A"
     lookup_chain.push(record[:Name_or_IP])
-    return lookup_chain
   elsif record[:type] == "CNAME"
     lookup_chain.push(record[:Name_or_IP])
     resolve(dns_records, lookup_chain, record[:Name_or_IP])
   else
-    return ["Invalid record"]
+    ["Invalid record"]
   end
 end
 
